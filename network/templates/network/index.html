@@ -1,5 +1,23 @@
 {% extends "network/layout.html" %}
 
+<!-- Decided to go for mostly API aproach, i need to train it -->
 {% block body %}
-    <div id="posts"></div>
+<div id="main-container">
+    <div id="all-posts-view">
+        <form id="post-form" action="{% url 'create_post' %}" method="POST" enctype="multipart/form-data">
+            <h2>Create a post</h2>
+            <!-- <textarea id="form-content" placeholder="Content"></textarea>
+            <input id="form-image" type="file" name="images[]" accept="image/" multiple>
+            <input id="btn-submit" type="submit"> -->
+            {% csrf_token %}
+            {{ form }}
+            <input id="btn-submit" type="submit" value="Post">
+        </form>
+        <div id="posts"></div>
+    </div>
+
+    <div id="profile-view">
+        
+    </div>
+</div>
 {% endblock %}

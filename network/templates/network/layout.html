@@ -19,7 +19,8 @@
               <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a>
+                        <!-- <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a> -->
+                        <button id="profile" class="nav-link"><strong>{{ user.username }}</strong></button>
                     </li>
                 {% endif %}
                 <li class="nav-item">

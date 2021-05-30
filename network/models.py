@@ -16,7 +16,8 @@ class User(AbstractUser):
             "created_at": self.created_at,
             "username": self.username,
             "is_staff": self.is_staff,
-            "is_active": self.is_active
+            "is_active": self.is_active,
+            "pfp": self.pfp.url
         }
 
 
