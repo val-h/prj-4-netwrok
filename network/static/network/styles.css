@@ -29,12 +29,18 @@
   border-radius: 3px;
   background-color: whitesmoke;
   margin-bottom: 10px; }
-  .post img {
+  .post .post-heading {
+    font-weight: 700;
+    font-size: 18px;
+    cursor: pointer; }
+    .post .post-heading .post-pfp {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%; }
+  .post .post-body img {
     max-height: 200px; }
-  .post .post-pfp {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%; }
+  .post .post-footer .heart {
+    cursor: pointer; }
 
 #profile-view {
   display: none; }

@@ -35,15 +35,31 @@
     background-color: whitesmoke;
     margin-bottom: 10px;
 
-    img {
-        max-height: 200px;
+    
+    .post-heading {
+        font-weight: 700;
+        font-size: 18px;
+        cursor: pointer;
+        
+        .post-pfp {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+    }
+    
+    .post-body {
+        img {
+            max-height: 200px;
+        }
     }
 
-    .post-pfp {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
+    .post-footer {
+        .heart {
+            cursor: pointer;
+        }
     }
+
 }
 
 #profile-view {
