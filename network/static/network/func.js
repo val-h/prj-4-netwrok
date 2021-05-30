@@ -70,7 +70,6 @@ function get_profile(profile_id) {
             const profile_view = document.querySelector('#profile-view');
             profile_view.innerHTML = `
             <h1>${data.user['username']}</h1>
-            <div id="user-posts"></div>
             `;
             if (data.user['is_staff']) {
                 profile_view.innerHTML += `<div>BIG BOSS</div>`;
@@ -80,14 +79,15 @@ function get_profile(profile_id) {
             } else {
                 profile_view.innerHTML += 'No profile Picture :<';
             }
-
+            
             // Load the posts for that user
+            profile_view.innerHTML += '<div id="user-posts"></div>'
             get_user_posts(data.user['id']);
         });
 }
 
 function get_user_posts(user_id) {
-    fetch(`/api/v1/posts/${user_id}`)
+    fetch(`/api/v1/u_posts/${user_id}`)
         .then(response => response.json())
         .then(data => {
             console.log('User posts:', data)
