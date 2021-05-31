@@ -3,3 +3,5 @@ Pipfile.lock
 __pycache__/
 .vscode/
 .sass-cache
+db.sqlite3
+media/

@@ -80,13 +80,14 @@ def create_post(request):
 
 
 # API
-def posts(request):
+def posts(request, user_id=None):
     if request.method == 'GET':
         # posts = Post.objects.filter(op=request.user)
         posts = Post.objects.all()
         return JsonResponse({
             "posts": [post.serialize() for post in posts]
         })
+
     # I won't be adding POST since image handling gives me headaches
 
 
@@ -111,8 +112,46 @@ def post(request, post_id):
         return JsonResponse({"error": "Invalid request method."})
 
 
-def profile(request):
+def profile(request, profile_id=None):
     if request.method == 'GET':
-        return JsonResponse({"user": request.user.serialize()})
+        if profile_id is None:
+            user = request.user.serialize()
+            is_current_user = True
+        else:
+            profile = User.objects.get(id=profile_id)
+            user = profile.serialize()
+            is_current_user = request.user == profile
+
+        return JsonResponse({
+            "user": user,
+            "is_current_user": is_current_user
+            })
     else:
         return JsonResponse({"error": "Invalid request method."})
+
+
+def user_posts(request, user_id):
+    # posts = Post.objects.filter(op=user_id)
+    posts = request.user.posts.all()
+    return JsonResponse({
+        "posts": [post.serialize() for post in posts]
+    })
+
+
+def follow_count(request, user_id):
+    user = User.objects.get(id=user_id)
+    if request.method == 'GET':
+        return JsonResponse({
+            "follow": user.follow_serialize()
+        })
+
+
+def follow(request, user_id):
+    user = User.objects.get(id=user_id)
+    # try:
+    user.followers.add(request.user)
+    # followers = user.followers.all()
+    # followers.add(request.user)
+    return JsonResponse({"message": "Followed successfully."}, status=201)
+    # except Exception:
+    # return JsonResponse({"error": "Followed unsuccessfully!"}, status=400)
