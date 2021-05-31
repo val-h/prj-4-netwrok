@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // Store the user
-    let user = 
+    // let user =
 
-    // Add window on scroll loading for posts
+    // Add window on scroll loading for posts TODO
 
     // by default, load current posts
     document.querySelector('#all-posts-view').style.display = 'block';
@@ -47,7 +47,7 @@ function show_profile(profile_id) {
     // Change to the appropriate view
     document.querySelector('#all-posts-view').style.display = 'none';
     document.querySelector('#profile-view').style.display = 'block';
-    
+
     get_profile(profile_id)
 }
 
@@ -66,28 +66,60 @@ function get_profile(profile_id) {
     fetch(`/api/v1/profile${id}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
-            const profile_view = document.querySelector('#profile-view');
+            // console.log(data);
+            // console.log(data['is_current_user'])
+            let profile_view = document.querySelector('#profile-view');
             profile_view.innerHTML = `
-            <h1>${data.user['username']}</h1>
+                <h1>${data.user['username']}</h1>
+                <div id='follow-section'></div>
             `;
+
+            // // Create the follow section
+            // let follow_section = document.createElement('div');
+            // follow_section.id = 'follow-section';
+            // profile_view.append(follow_section)
+
+            // Staff check
             if (data.user['is_staff']) {
-                profile_view.innerHTML += `<div>BIG BOSS</div>`;
+                profile_view.innerHTML += `<div>Is staf? - BIG BOSS</div>`;
             }
+
+            // Profile Picture check
             if (data.user['pfp']) {
                 profile_view.innerHTML += `<img id="profile-pfp" src="${data.user['pfp']}" alt="Profile Picture">`;
             } else {
                 profile_view.innerHTML += 'No profile Picture :<';
             }
-            
-            // Load the posts for that user
+
+            // Is current user check
+            if (data.is_current_user === false) {
+                // Display the follow/Unfollow button, temp func :D
+                profile_view.innerHTML += `
+                    <div><button id="follow-user" onclick='follow(${data.user['id']})'>Follow</button></div>
+                `;
+            }
+
+            // Create and fill the Follow section
+            fetch(`/api/v1/u-follow-count/${data.user['id']}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // Create the fileds
+                    document.querySelector('#follow-section').innerHTML += `
+                            <span>Followers: ${data.follow['followers']}</span>
+                            <span>Following: ${data.follow['following']}</span>
+                        `;
+                });
+
             profile_view.innerHTML += '<div id="user-posts"></div>'
+            // Load the posts for that user
+            // Wierd error from nowhere, loads the logged in user's posts
             get_user_posts(data.user['id']);
         });
 }
 
 function get_user_posts(user_id) {
-    fetch(`/api/v1/u_posts/${user_id}`)
+    fetch(`/api/v1/u-posts/${user_id}`)
         .then(response => response.json())
         .then(data => {
             console.log('User posts:', data)
@@ -105,7 +137,6 @@ function add_user_post(contents) {
 function create_post_element(post_data) {
     const post = document.createElement('div');
     post.className = 'post';
-    // post.innerHTML = contents['content'];
     post.innerHTML = `
         <div class="post-heading" onclick='show_profile(${post_data['op']['id']})'>
             <img class="post-pfp" src="${post_data['op']['pfp']}" alt="Profile Picture"> - 
@@ -121,4 +152,22 @@ function create_post_element(post_data) {
         </div>
     `;
     return post;
+}
+
+function follow_count(user_id) {
+    // follow the user, api call to update the model
+    fetch(`/api/v1/u-follow-count/${user_id}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            return data['followers'], data['following']
+        });
+}
+
+function follow(user_id) {
+    fetch(`/api/v1/follow/${user_id}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+        })
 }
