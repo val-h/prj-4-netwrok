@@ -148,8 +148,11 @@ def follow_count(request, user_id):
 
 def follow(request, user_id):
     user = User.objects.get(id=user_id)
+    print(user)
     # try:
+    print('User followers:', user.followers)
     user.followers.add(request.user)
+    user.save()
     # followers = user.followers.all()
     # followers.add(request.user)
     return JsonResponse({"message": "Followed successfully."}, status=201)

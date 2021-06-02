@@ -3,6 +3,7 @@
 <!-- Decided to go for mostly API aproach, i need to train it -->
 {% block body %}
 <div id="main-container">
+    {% if request.user.is_authenticated %}
     <div id="all-posts-view">
         <form id="post-form" action="{% url 'create_post' %}" method="POST" enctype="multipart/form-data">
             <h2>Create a post</h2>
@@ -15,6 +16,9 @@
         </form>
         <div id="posts"></div>
     </div>
+    {% else %}
+        <div>Login to make posts</div>
+    {% endif %}
     
     <div id="profile-view">
         

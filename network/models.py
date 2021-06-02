@@ -7,7 +7,6 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
     followers = models.ForeignKey(
         'User',
-        null=True,
         blank=True,
         on_delete=models.CASCADE,
         related_name='following')
