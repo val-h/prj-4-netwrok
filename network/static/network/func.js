@@ -45,10 +45,11 @@ function show_profile(profile_id) {
     document.querySelector('#all-posts-view').style.display = 'none';
     document.querySelector('#profile-view').style.display = 'block';
 
-    get_profile(profile_id)
+    // Set the user profile
+    setProfile(profile_id);
 }
 
-function get_profile(profile_id) {
+function setProfile(profile_id) {
     // Specify the user
     let id;
     if (profile_id === undefined) {
@@ -59,7 +60,7 @@ function get_profile(profile_id) {
         id = `/${profile_id}`;
     }
 
-    // Get the user profile info
+    // API call for the user data
     fetch(`/api/v1/profile${id}`)
         .then(response => response.json())
         .then(data => {
@@ -111,7 +112,6 @@ function get_profile(profile_id) {
 
             profile_view.innerHTML += '<div id="user-posts"></div>'
             // Load the posts for that user
-            // Wierd error from nowhere, loads the logged in user's posts
             get_user_posts(data.user['id']);
         });
 }
@@ -168,6 +168,6 @@ function follow(user_id) {
         .then(data => {
             console.log(data);
         })
-    // refresh the page 
-    get_profile(user_id);
+    // refresh the page after a while, give time to unfollow
+    setTimeout(setProfile, '100', user_id);
 }
