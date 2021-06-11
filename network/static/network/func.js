@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // by default, load current posts
     document.querySelector('#all-posts-view').style.display = 'block';
     document.querySelector('#profile-view').style.display = 'none';
+    document.querySelector('#following-view').style.display = 'none';
     get_all_posts();
 
     // All posts button
@@ -12,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Change to the appropriate view
         document.querySelector('#all-posts-view').style.display = 'block';
         document.querySelector('#profile-view').style.display = 'none';
+        document.querySelector('#following-view').style.display = 'none';
 
         // clear current view
         document.querySelector('#posts').innerHTML = "";
@@ -22,7 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Profile button
     document.querySelector('#profile').onclick = () => {
-        show_profile();
+        showProfile();
+    };
+
+    // Following button
+    document.querySelector('#following-page').onclick = () => {
+        followingPage();
     };
 });
 
@@ -31,19 +38,20 @@ function get_all_posts() {
     fetch('/api/v1/posts')
         .then(response => response.json())
         .then(data => {
-            data.posts.forEach(add_post);
+            data.posts.forEach(post => add_post(contents=post, section='#posts'));
         })
 }
 
-function add_post(contents) {
+function add_post(contents, section) {
     post = create_post_element(contents);
-    document.querySelector('#posts').append(post);
+    document.querySelector(`${section}`).append(post);
 }
 
-function show_profile(profile_id) {
+function showProfile(profile_id) {
     // Change to the appropriate view
     document.querySelector('#all-posts-view').style.display = 'none';
     document.querySelector('#profile-view').style.display = 'block';
+    document.querySelector('#following-view').style.display = 'none';
 
     // Set the user profile
     setProfile(profile_id);
@@ -123,20 +131,15 @@ function get_user_posts(user_id) {
             console.log('User posts:', data)
             // profile_posts = document.querySelector('#user-posts');
             // I don't like having specific functions like that, but for now it will do
-            data.posts.forEach(add_user_post);
+            data.posts.forEach(post => add_post(contents=post, section='#user-posts'));
         });
-}
-
-function add_user_post(contents) {
-    post = create_post_element(contents);
-    document.querySelector('#user-posts').append(post);
 }
 
 function create_post_element(post_data) {
     const post = document.createElement('div');
     post.className = 'post';
     post.innerHTML = `
-        <div class="post-heading" onclick='show_profile(${post_data['op']['id']})'>
+        <div class="post-heading" onclick='showProfile(${post_data['op']['id']})'>
             <img class="post-pfp" src="${post_data['op']['pfp']}" alt="Profile Picture"> - 
             ${post_data['op']['username']}
         </div>
@@ -170,4 +173,19 @@ function follow(user_id) {
         })
     // refresh the page after a while, give time to unfollow
     setTimeout(setProfile, '100', user_id);
+}
+
+// Following page
+function followingPage() {
+    // Change to the appropriate view
+    document.querySelector('#all-posts-view').style.display = 'none';
+    document.querySelector('#profile-view').style.display = 'none';
+    document.querySelector('#following-view').style.display = 'block';
+
+    // Make a call for posts from followed users
+    fetch('/api/v1/followed-posts')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+        });
 }

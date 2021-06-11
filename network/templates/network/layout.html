@@ -20,16 +20,16 @@
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <!-- <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a> -->
-                        <button id="profile" class="nav-link"><strong>{{ user.username }}</strong></button>
+                        <a id="profile" class="nav-link nav-link-own"><strong>{{ user.username }}</strong></a>
                     </li>
                 {% endif %}
                 <li class="nav-item">
                   <!-- <a id="all-posts" class="nav-link" href="{% url 'index' %}">All Posts</a> -->
-                    <button id="all-posts" class="nav-link">All Posts</button>
+                    <a id="all-posts" class="nav-link nav-link-own">All Posts</a>
                 </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Following</a>
+                        <a id="following-page" class="nav-link nav-link-own">Following</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">Log Out</a>

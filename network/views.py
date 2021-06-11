@@ -162,3 +162,10 @@ def follow(request, user_id):
         return JsonResponse(
             {"message": "Unfollowed successfully."},
             status=201)
+
+
+def followed_posts(request):
+    posts = []
+    for followed_user in request.user.following.all():
+        posts.append(followed_user.posts.order_by('-created_at').all())
+    return JsonResponse({"posts": posts}, staus=201)

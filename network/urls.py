@@ -25,6 +25,10 @@ urlpatterns = [
         views.follow_count,
         name='follow_count'),
     path('api/v1/follow/<int:user_id>', views.follow, name='follow'),
+    path(
+        'api/v1/followed-posts',
+        views.followed_posts,
+        name='followed-posts'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
