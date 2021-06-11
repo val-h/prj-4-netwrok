@@ -1,8 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Store the user
-    // let user =
-
     // Add window on scroll loading for posts TODO
 
     // by default, load current posts
@@ -66,7 +63,7 @@ function get_profile(profile_id) {
     fetch(`/api/v1/profile${id}`)
         .then(response => response.json())
         .then(data => {
-            // console.log(data);
+            console.log(data);
             // console.log(data['is_current_user'])
             let profile_view = document.querySelector('#profile-view');
             profile_view.innerHTML = `
@@ -93,9 +90,15 @@ function get_profile(profile_id) {
 
             // Is current user check
             if (data.is_current_user === false) {
+                // Set the button's text
+                if (data.following === true) {
+                    btnFollowText = 'Unfollow';
+                } else {
+                    btnFollowText = 'Follow';
+                }
                 // Display the follow/Unfollow button, temp func :D
                 profile_view.innerHTML += `
-                    <div><button id="follow-user" onclick='follow(${data.user['id']})'>Follow</button></div>
+                    <div><button id="follow-user" onclick='follow(${data.user['id']})'>${btnFollowText}</button></div>
                 `;
             }
 
@@ -106,8 +109,8 @@ function get_profile(profile_id) {
                     console.log(data);
                     // Create the fileds
                     document.querySelector('#follow-section').innerHTML += `
-                            <span>Followers: ${data.follow['followers']}</span>
-                            <span>Following: ${data.follow['following']}</span>
+                            <span>Followers: ${data.followers_data['followers']}</span>
+                            <span>Following: ${data.followers_data['following']}</span>
                         `;
                 });
 
@@ -168,6 +171,9 @@ function follow(user_id) {
     fetch(`/api/v1/follow/${user_id}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data)
+            console.log(data);
         })
+    // refresh the page 
+    // setTimeout(get_profile(user_id, '1'));
+    get_profile(user_id);
 }

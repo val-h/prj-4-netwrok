@@ -117,22 +117,25 @@ def profile(request, profile_id=None):
         if profile_id is None:
             user = request.user.serialize()
             is_current_user = True
+            following = False
         else:
             profile = User.objects.get(id=profile_id)
             user = profile.serialize()
             is_current_user = request.user == profile
+            following = request.user in profile.followers.all()
 
         return JsonResponse({
             "user": user,
-            "is_current_user": is_current_user
+            "is_current_user": is_current_user,
+            "following": following,
             })
     else:
         return JsonResponse({"error": "Invalid request method."})
 
 
 def user_posts(request, user_id):
-    # posts = Post.objects.filter(op=user_id)
-    posts = request.user.posts.all()
+    user = User.objects.get(id=user_id)
+    posts = user.posts.all()
     return JsonResponse({
         "posts": [post.serialize() for post in posts]
     })
@@ -142,19 +145,20 @@ def follow_count(request, user_id):
     user = User.objects.get(id=user_id)
     if request.method == 'GET':
         return JsonResponse({
-            "follow": user.follow_serialize()
+            "followers_data": user.follow_serialize()
         })
 
 
 def follow(request, user_id):
     user = User.objects.get(id=user_id)
-    print(user)
-    # try:
-    print('User followers:', user.followers)
-    user.followers.add(request.user)
-    user.save()
-    # followers = user.followers.all()
-    # followers.add(request.user)
-    return JsonResponse({"message": "Followed successfully."}, status=201)
-    # except Exception:
-    # return JsonResponse({"error": "Followed unsuccessfully!"}, status=400)
+    if request.user not in user.followers.all():
+        print('User followed')
+        user.followers.add(request.user)
+        user.save()
+        return JsonResponse({"message": "Followed successfully."}, status=201)
+    else:
+        print('User unfollowed')
+        user.followers.remove(request.user)
+        return JsonResponse(
+            {"message": "Unfollowed successfully."},
+            status=201)

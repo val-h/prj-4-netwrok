@@ -5,17 +5,10 @@ from django.db import models
 class User(AbstractUser):
     id = models.AutoField(primary_key=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    followers = models.ForeignKey(
+    followers = models.ManyToManyField(
         'User',
         blank=True,
-        on_delete=models.CASCADE,
         related_name='following')
-    # following = models.ForeignKey(
-    #     'User',
-    #     null=True,
-    #     blank=True,
-    #     on_delete=models.CASCADE,
-    #     related_name='followers')
     pfp = models.ImageField(
         upload_to='media',
         default='media/open_SUS.png',
@@ -32,19 +25,8 @@ class User(AbstractUser):
         }
 
     def follow_serialize(self):
-        followers = 0
-        following = 0
-        if self.followers:
-            for follower in self.followers.all():
-                followers += 1
-        else:
-            followers = 0
-
-        if self.following:
-            for follower in self.following.all():
-                following += 1
-        else:
-            following = 0
+        followers = self.followers.count()
+        following = self.following.count()
 
         return {
             "user_id": self.id,
@@ -62,7 +44,6 @@ class Post(models.Model):
     image = models.ImageField(upload_to='media', blank=True)
     likes = models.IntegerField(default=0)
 
-    # Skipping the image file for now, i sense errors
     def serialize(self):
         return {
             "id": self.id,
@@ -74,6 +55,7 @@ class Post(models.Model):
         }
 
 
+# Still not implemented, for later
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
