@@ -187,5 +187,6 @@ function followingPage() {
         .then(response => response.json())
         .then(data => {
             console.log(data)
+            data.posts.forEach(post => add_post(post, section='#following-view'))
         });
 }

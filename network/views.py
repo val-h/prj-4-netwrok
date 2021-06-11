@@ -167,5 +167,14 @@ def follow(request, user_id):
 def followed_posts(request):
     posts = []
     for followed_user in request.user.following.all():
-        posts.append(followed_user.posts.order_by('-created_at').all())
-    return JsonResponse({"posts": posts}, staus=201)
+        # fancy oneliner
+        posts += [
+            post.serialize()
+            for post in followed_user.posts.order_by('-created_at').all()]
+
+        # for post in followed_user.posts.order_by('-created_at').all():
+        #     posts.append(post.serialize())
+    if posts:
+        return JsonResponse({"posts": posts}, status=201)
+    else:
+        return JsonResponse({"message": "No posts"}, status=201)
