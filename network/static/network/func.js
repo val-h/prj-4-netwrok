@@ -71,11 +71,6 @@ function get_profile(profile_id) {
                 <div id='follow-section'></div>
             `;
 
-            // // Create the follow section
-            // let follow_section = document.createElement('div');
-            // follow_section.id = 'follow-section';
-            // profile_view.append(follow_section)
-
             // Staff check
             if (data.user['is_staff']) {
                 profile_view.innerHTML += `<div>Is staf? - BIG BOSS</div>`;
@@ -174,6 +169,5 @@ function follow(user_id) {
             console.log(data);
         })
     // refresh the page 
-    // setTimeout(get_profile(user_id, '1'));
     get_profile(user_id);
 }

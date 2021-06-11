@@ -83,7 +83,7 @@ def create_post(request):
 def posts(request, user_id=None):
     if request.method == 'GET':
         # posts = Post.objects.filter(op=request.user)
-        posts = Post.objects.all()
+        posts = Post.objects.order_by('-created_at').all()
         return JsonResponse({
             "posts": [post.serialize() for post in posts]
         })
@@ -135,7 +135,7 @@ def profile(request, profile_id=None):
 
 def user_posts(request, user_id):
     user = User.objects.get(id=user_id)
-    posts = user.posts.all()
+    posts = user.posts.order_by('-created_at').all()
     return JsonResponse({
         "posts": [post.serialize() for post in posts]
     })
