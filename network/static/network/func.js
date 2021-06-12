@@ -1,20 +1,43 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    document.querySelector('#all-posts-view').style.display = 'block';
+    document.querySelector('#profile-view').style.display = 'none';
+    document.querySelector('#following-view').style.display = 'none';
+    // page flag
+    let page = 'all-posts';
+    
     let counter = 0;
     let quantity = 9;
     let start;
     let end;
-
-    // by default, load current posts
-    document.querySelector('#all-posts-view').style.display = 'block';
-    document.querySelector('#profile-view').style.display = 'none';
-    document.querySelector('#following-view').style.display = 'none';
-
+    
     start = counter;
     end = start + quantity;
     counter = end + 1;
-
+    // by default, load current posts
     get_all_posts(start, end);
+
+
+    // Add window on scroll loading for posts TODO
+    window.onscroll = () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+
+            // get the posts
+            start = counter;
+            end = start + quantity;
+
+            counter = end + 1;
+
+            if (page === 'all-posts') {
+                get_all_posts(start, end);
+            } else if (page === 'profile') {
+                get_user_posts()
+            } else if (page === 'following') {
+
+            }
+        }
+    };
+
 
     // All posts button
     document.querySelector('#all-posts').onclick = () => {
@@ -22,6 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#all-posts-view').style.display = 'block';
         document.querySelector('#profile-view').style.display = 'none';
         document.querySelector('#following-view').style.display = 'none';
+        page = 'all-posts';
 
         // clear current view
         document.querySelector('#posts').innerHTML = "";
@@ -31,23 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
         end = start + quantity;
         counter = end + 1;
         get_all_posts(start, end);
-
-        // Add window on scroll loading for posts TODO
-        window.onscroll = () => {
-            if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-                // document.querySelector('body').style.background = 'lightskyblue';
-
-                // get the posts
-                start = counter;
-                end = start + quantity;
-
-                counter = end + 1;
-
-                get_all_posts(start, end);
-                // setTimeout(get_all_posts, '100', start, end);
-            }
-        };
-
     };
 
     // Profile button
@@ -81,6 +88,7 @@ function showProfile(profile_id) {
     document.querySelector('#all-posts-view').style.display = 'none';
     document.querySelector('#profile-view').style.display = 'block';
     document.querySelector('#following-view').style.display = 'none';
+    page = 'profile';
 
     // Set the user profile
     setProfile(profile_id);
@@ -158,8 +166,6 @@ function get_user_posts(user_id) {
         .then(response => response.json())
         .then(data => {
             console.log('User posts:', data)
-            // profile_posts = document.querySelector('#user-posts');
-            // I don't like having specific functions like that, but for now it will do
             data.posts.forEach(post => add_post(contents = post, section = '#user-posts'));
         });
 }
@@ -210,16 +216,21 @@ function followingPage() {
     document.querySelector('#all-posts-view').style.display = 'none';
     document.querySelector('#profile-view').style.display = 'none';
     document.querySelector('#following-view').style.display = 'block';
+    page = 'following';
 
     document.querySelector('#following-view').innerHTML = '';
 
     // Make a call for posts from followed users
+    getFollowingPosts();
+}
+
+function getFollowingPosts() {
     fetch('/api/v1/followed-posts')
-        .then(response => response.json())
-        .then(data => {
-            console.log(data)
-            if (data.posts) {
-                data.posts.forEach(post => add_post(post, section = '#following-view'))
-            }
-        });
+    .then(response => response.json())
+    .then(data => {
+        console.log(data)
+        if (data.posts) {
+            data.posts.forEach(post => add_post(post, section = '#following-view'))
+        }
+    });
 }

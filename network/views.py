@@ -171,11 +171,13 @@ def followed_posts(request):
         # fancy oneliner
         posts += [
             post.serialize()
-            for post in followed_user.posts.order_by('-created_at').all()]
+            for post in followed_user.posts.all()]
 
         # for post in followed_user.posts.order_by('-created_at').all():
         #     posts.append(post.serialize())
+
     if posts:
+        posts.sort(key=lambda post: post['created_at'], reverse=True)
         return JsonResponse({"posts": posts}, status=201)
     else:
         return JsonResponse({"message": "No posts"}, status=201)
