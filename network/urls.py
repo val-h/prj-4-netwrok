@@ -29,7 +29,7 @@ urlpatterns = [
 
     path('api/v1/follow/<int:user_id>', views.follow, name='follow'),
     path(
-        'api/v1/followed-posts',
+        'api/v1/followed-posts/start=<int:start>&end=<int:end>',
         views.followed_posts, name='followed-posts'),
 ]
 if settings.DEBUG:

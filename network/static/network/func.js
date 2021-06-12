@@ -1,19 +1,19 @@
+// page flag
+let page;
+
 document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelector('#all-posts-view').style.display = 'block';
     document.querySelector('#profile-view').style.display = 'none';
     document.querySelector('#following-view').style.display = 'none';
-    // page flag
-    let page = 'all-posts';
+    page = 'all-posts';
     
     let counter = 0;
-    let quantity = 9;
+    let quantity = 3;
     let start;
     let end;
     
-    start = counter;
-    end = start + quantity;
-    counter = end + 1;
+    resetCounterVars();
     // by default, load current posts
     get_all_posts(start, end);
 
@@ -25,15 +25,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // get the posts
             start = counter;
             end = start + quantity;
-
             counter = end + 1;
 
+            console.log(page);
             if (page === 'all-posts') {
                 get_all_posts(start, end);
             } else if (page === 'profile') {
-                get_user_posts()
+                // get_user_posts()
             } else if (page === 'following') {
-
+                getFollowingPosts(start, end)
             }
         }
     };
@@ -50,22 +50,29 @@ document.addEventListener('DOMContentLoaded', () => {
         // clear current view
         document.querySelector('#posts').innerHTML = "";
 
-        counter = 0;
-        start = counter;
-        end = start + quantity;
-        counter = end + 1;
+        resetCounterVars();
         get_all_posts(start, end);
     };
 
     // Profile button
     document.querySelector('#profile').onclick = () => {
+        resetCounterVars();
         showProfile();
     };
 
     // Following button
     document.querySelector('#following-page').onclick = () => {
-        followingPage();
+        resetCounterVars();
+        followingPage(start, end);
     };
+
+    function resetCounterVars() {
+        counter = 0;
+        start = counter;
+        end = start + quantity;
+        counter = end + 1;
+        return null;
+    }
 });
 
 function get_all_posts(start, end) {
@@ -211,7 +218,7 @@ function follow(user_id) {
 }
 
 // Following page
-function followingPage() {
+function followingPage(start, end) {
     // Change to the appropriate view
     document.querySelector('#all-posts-view').style.display = 'none';
     document.querySelector('#profile-view').style.display = 'none';
@@ -221,11 +228,11 @@ function followingPage() {
     document.querySelector('#following-view').innerHTML = '';
 
     // Make a call for posts from followed users
-    getFollowingPosts();
+    getFollowingPosts(start, end);
 }
 
-function getFollowingPosts() {
-    fetch('/api/v1/followed-posts')
+function getFollowingPosts(start, end) {
+    fetch(`/api/v1/followed-posts/start=${start}&end=${end}`)
     .then(response => response.json())
     .then(data => {
         console.log(data)
