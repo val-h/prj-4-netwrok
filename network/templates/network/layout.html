@@ -13,23 +13,23 @@
     <body>
 
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">Network</a>
+            <a class="navbar-brand" href="">Network</a>
           
             <div>
               <ul class="navbar-nav mr-auto">
                 {% if user.is_authenticated %}
                     <li class="nav-item">
                         <!-- <a class="nav-link" href="#"><strong>{{ user.username }}</strong></a> -->
-                        <a id="profile" class="nav-link nav-link-own"><strong>{{ user.username }}</strong></a>
+                        <button id="profile" class="nav-link nav-link-own"><strong>{{ user.username }}</strong></button>
                     </li>
                 {% endif %}
                 <li class="nav-item">
                   <!-- <a id="all-posts" class="nav-link" href="{% url 'index' %}">All Posts</a> -->
-                    <a id="all-posts" class="nav-link nav-link-own">All Posts</a>
+                    <button id="all-posts" class="nav-link nav-link-own">All Posts</button>
                 </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a id="following-page" class="nav-link nav-link-own">Following</a>
+                        <button id="following-page" class="nav-link nav-link-own">Following</button>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'logout' %}">Log Out</a>

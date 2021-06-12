@@ -1,12 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Add window on scroll loading for posts TODO
+    let counter = 0;
+    let quantity = 9;
+    let start;
+    let end;
 
     // by default, load current posts
     document.querySelector('#all-posts-view').style.display = 'block';
     document.querySelector('#profile-view').style.display = 'none';
     document.querySelector('#following-view').style.display = 'none';
-    get_all_posts();
+
+    start = counter;
+    end = start + quantity;
+    counter = end + 1;
+
+    get_all_posts(start, end);
 
     // All posts button
     document.querySelector('#all-posts').onclick = () => {
@@ -18,8 +26,28 @@ document.addEventListener('DOMContentLoaded', () => {
         // clear current view
         document.querySelector('#posts').innerHTML = "";
 
-        // get the posts
-        get_all_posts();
+        counter = 0;
+        start = counter;
+        end = start + quantity;
+        counter = end + 1;
+        get_all_posts(start, end);
+
+        // Add window on scroll loading for posts TODO
+        window.onscroll = () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+                // document.querySelector('body').style.background = 'lightskyblue';
+
+                // get the posts
+                start = counter;
+                end = start + quantity;
+
+                counter = end + 1;
+
+                get_all_posts(start, end);
+                // setTimeout(get_all_posts, '100', start, end);
+            }
+        };
+
     };
 
     // Profile button
@@ -33,12 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 });
 
-function get_all_posts() {
+function get_all_posts(start, end) {
     // fetch all the posts
-    fetch('/api/v1/posts')
+    fetch(`/api/v1/posts/start=${start}&end=${end}`)
         .then(response => response.json())
         .then(data => {
-            data.posts.forEach(post => add_post(contents=post, section='#posts'));
+            console.log(data);
+            data.posts.forEach(post => add_post(contents = post, section = '#posts'));
         })
 }
 
@@ -131,7 +160,7 @@ function get_user_posts(user_id) {
             console.log('User posts:', data)
             // profile_posts = document.querySelector('#user-posts');
             // I don't like having specific functions like that, but for now it will do
-            data.posts.forEach(post => add_post(contents=post, section='#user-posts'));
+            data.posts.forEach(post => add_post(contents = post, section = '#user-posts'));
         });
 }
 
@@ -182,11 +211,15 @@ function followingPage() {
     document.querySelector('#profile-view').style.display = 'none';
     document.querySelector('#following-view').style.display = 'block';
 
+    document.querySelector('#following-view').innerHTML = '';
+
     // Make a call for posts from followed users
     fetch('/api/v1/followed-posts')
         .then(response => response.json())
         .then(data => {
             console.log(data)
-            data.posts.forEach(post => add_post(post, section='#following-view'))
+            if (data.posts) {
+                data.posts.forEach(post => add_post(post, section = '#following-view'))
+            }
         });
 }

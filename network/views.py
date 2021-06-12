@@ -80,15 +80,16 @@ def create_post(request):
 
 
 # API
-def posts(request, user_id=None):
+def posts(request, start=1, end=10):
     if request.method == 'GET':
         # posts = Post.objects.filter(op=request.user)
-        posts = Post.objects.order_by('-created_at').all()
+        posts = Post.objects.order_by('-created_at').all()[start:end]
         return JsonResponse({
             "posts": [post.serialize() for post in posts]
         })
-
-    # I won't be adding POST since image handling gives me headaches
+        # return JsonResponse({
+        #     "posts": 1
+        # })
 
 
 def post(request, post_id):
