@@ -19,10 +19,12 @@ urlpatterns = [
         'api/v1/posts/start=<int:start>&end=<int:end>',
         views.posts, name='posts'),
 
-    # path('api/v1/posts/<int:post_id>', views.post, name="post"),
+    path('api/v1/posts/<int:post_id>', views.post, name="post"),
     path('api/v1/profile', views.profile, name="profile"),
     path('api/v1/profile/<int:profile_id>', views.profile, name='profiles'),
-    path('api/v1/u-posts/<int:user_id>', views.user_posts, name='user_posts'),
+    path(
+        'api/v1/u-posts/<int:user_id>/start=<int:start>&end=<int:end>',
+        views.user_posts, name='user_posts'),
     path(
         'api/v1/u-follow-count/<int:user_id>',
         views.follow_count, name='follow_count'),

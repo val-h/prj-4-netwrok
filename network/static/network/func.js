@@ -1,5 +1,7 @@
 // page flag
 let page;
+// Current ID of User profile being displayed
+let usrProfileId;
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -7,12 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#profile-view').style.display = 'none';
     document.querySelector('#following-view').style.display = 'none';
     page = 'all-posts';
-    
+
     let counter = 0;
     let quantity = 3;
     let start;
     let end;
-    
+
     resetCounterVars();
     // by default, load current posts
     get_all_posts(start, end);
@@ -31,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (page === 'all-posts') {
                 get_all_posts(start, end);
             } else if (page === 'profile') {
-                // get_user_posts()
+                get_user_posts(usrProfileId, start, end)
             } else if (page === 'following') {
                 getFollowingPosts(start, end)
             }
@@ -57,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Profile button
     document.querySelector('#profile').onclick = () => {
         resetCounterVars();
-        showProfile();
+        showProfile(usrProfileId, start, end);
     };
 
     // Following button
@@ -90,7 +92,7 @@ function add_post(contents, section) {
     document.querySelector(`${section}`).append(post);
 }
 
-function showProfile(profile_id) {
+function showProfile(profile_id, start, end) {
     // Change to the appropriate view
     document.querySelector('#all-posts-view').style.display = 'none';
     document.querySelector('#profile-view').style.display = 'block';
@@ -98,10 +100,10 @@ function showProfile(profile_id) {
     page = 'profile';
 
     // Set the user profile
-    setProfile(profile_id);
+    setProfile(profile_id, start, end);
 }
 
-function setProfile(profile_id) {
+function setProfile(profile_id, start, end) {
     // Specify the user
     let id;
     if (profile_id === undefined) {
@@ -117,6 +119,9 @@ function setProfile(profile_id) {
         .then(response => response.json())
         .then(data => {
             console.log(data);
+            // Terrible implementation but i have no better ideas at 3am
+            usrProfileId = data.user['id'];
+
             // console.log(data['is_current_user'])
             let profile_view = document.querySelector('#profile-view');
             profile_view.innerHTML = `
@@ -164,12 +169,12 @@ function setProfile(profile_id) {
 
             profile_view.innerHTML += '<div id="user-posts"></div>'
             // Load the posts for that user
-            get_user_posts(data.user['id']);
+            get_user_posts(usrProfileId, start, end);
         });
 }
 
-function get_user_posts(user_id) {
-    fetch(`/api/v1/u-posts/${user_id}`)
+function get_user_posts(user_id, start, end) {
+    fetch(`/api/v1/u-posts/${user_id}/start=${start}&end=${end}`)
         .then(response => response.json())
         .then(data => {
             console.log('User posts:', data)
@@ -233,11 +238,11 @@ function followingPage(start, end) {
 
 function getFollowingPosts(start, end) {
     fetch(`/api/v1/followed-posts/start=${start}&end=${end}`)
-    .then(response => response.json())
-    .then(data => {
-        console.log(data)
-        if (data.posts) {
-            data.posts.forEach(post => add_post(post, section = '#following-view'))
-        }
-    });
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            if (data.posts) {
+                data.posts.forEach(post => add_post(post, section = '#following-view'))
+            }
+        });
 }

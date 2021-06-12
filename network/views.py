@@ -130,9 +130,9 @@ def profile(request, profile_id=None):
         return JsonResponse({"error": "Invalid request method."})
 
 
-def user_posts(request, user_id):
+def user_posts(request, user_id, start, end):
     user = User.objects.get(id=user_id)
-    posts = user.posts.order_by('-created_at').all()
+    posts = user.posts.order_by('-created_at').all()[start:end]
     return JsonResponse({
         "posts": [post.serialize() for post in posts]
     })
