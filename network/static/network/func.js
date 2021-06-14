@@ -208,7 +208,14 @@ function create_post_element(post_data) {
     `;
 
     if (usrProfileId === post_data['op']['id']) {
-        post.innerHTML += `<button class='btn-edit-post' onclick='editPost(${post_data['id']})'>Edit</button>`;
+        editBtn = document.createElement('div');
+        editBtn.innerHTML = 'Edit';
+        // fix this
+        editBtn.attributes.onclick = editPost(post_data);
+        editBtn.className = 'btn-edit-post';
+
+        post.appendChild(editBtn);
+        // post.innerHTML += `<button class='btn-edit-post' onclick='editPost(${post_data['id']})'>Edit</button>`;
     }
     // console.log(post.getElementsByClassName('post-content'));
     // post_content = post.getElementsByClassName('post-content');
@@ -262,7 +269,7 @@ function getFollowingPosts(start, end) {
         });
 }
 
-function editPost(post_id) {
+function editPost(post) {
     alert('Tried to edit.')
     // Show another page where the user can edit the post
     document.querySelector('#all-posts-view').style.display = 'none';
@@ -274,10 +281,12 @@ function editPost(post_id) {
     // Get the edit form
     editForm = document.querySelector('#edit-form');
     // Doesn't work
-    editForm.attributes.action = `/api/v1/edit-post/${post_id}`;
+    editForm.attributes.action = `/api/v1/edit-post/${post['id']}`;
 
+
+    // No longer needed
     // Get the single post
-    fetch(`api/v1/posts/${post_id}`)
+    fetch(`api/v1/posts/${post['id']}`)
         .then(response => response.json())
         .then(data => {
             console.log(data);
