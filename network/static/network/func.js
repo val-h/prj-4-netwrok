@@ -185,6 +185,8 @@ function get_user_posts(user_id, start, end) {
         });
 }
 
+
+// Refactor this, don't make a new page, just replace the content section with a text area and add a button
 function create_post_element(post_data) {
     const post = document.createElement('div');
     post.className = 'post';
@@ -195,7 +197,6 @@ function create_post_element(post_data) {
             <img class="post-pfp" src="${post_data['op']['pfp']}" alt="Profile Picture"> - 
             ${post_data['op']['username']}
         </div>
-        <button class='btn-edit-post' onclick='editPost(${post_data['id']})'>Edit</button>
         <div class="post-body">
             <p class="post-date">${post_data['created_at']}</p>
             <p class="post-content">${post_data['content']}</p>
@@ -205,6 +206,13 @@ function create_post_element(post_data) {
             <p class="post-likes">&#128151; 🤍 ${post_data['likes']}</p>
         </div>
     `;
+
+    if (usrProfileId === post_data['op']['id']) {
+        post.innerHTML += `<button class='btn-edit-post' onclick='editPost(${post_data['id']})'>Edit</button>`;
+    }
+    // console.log(post.getElementsByClassName('post-content'));
+    // post_content = post.getElementsByClassName('post-content');
+    // post_content.style.display = 'none';
     return post;
 }
 
