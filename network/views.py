@@ -79,6 +79,15 @@ def create_post(request):
             return redirect('index')
 
 
+def edit_post(request, post_id):
+    if request.method == 'POST':
+        post = Post.objects.get(id=post_id)
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save()
+            return redirect('index')
+
+
 # API
 def posts(request, start=1, end=10):
     if request.method == 'GET':

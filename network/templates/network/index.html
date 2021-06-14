@@ -21,11 +21,20 @@
     {% endif %}
     
     <div id="profile-view">
-        
+        <h3>Profile</h3>
     </div>
 
     <div id="following-view">
         <h3>Following posts</h3>
+    </div>
+
+    <div id="edit-post-view">
+        <form id="edit-form" method="POST" enctype="multipart/form-data">
+            <h3>Edit post</h3>
+            {% csrf_token %}
+            {{ form }}
+            <input id="btn-save" type="submit" value="Save">
+        </form>
     </div>
 </div>
 {% endblock %}

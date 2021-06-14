@@ -8,10 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#all-posts-view').style.display = 'block';
     document.querySelector('#profile-view').style.display = 'none';
     document.querySelector('#following-view').style.display = 'none';
+    document.querySelector('#edit-post-view').style.display = 'none';
     page = 'all-posts';
 
     let counter = 0;
-    let quantity = 3;
+    let quantity = 3; // bump this to 10 for the review
     let start;
     let end;
 
@@ -47,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('#all-posts-view').style.display = 'block';
         document.querySelector('#profile-view').style.display = 'none';
         document.querySelector('#following-view').style.display = 'none';
+        document.querySelector('#edit-post-view').style.display = 'none';
         page = 'all-posts';
 
         // clear current view
@@ -97,6 +99,7 @@ function showProfile(profile_id, start, end) {
     document.querySelector('#all-posts-view').style.display = 'none';
     document.querySelector('#profile-view').style.display = 'block';
     document.querySelector('#following-view').style.display = 'none';
+    document.querySelector('#edit-post-view').style.display = 'none';
     page = 'profile';
 
     // Set the user profile
@@ -185,11 +188,14 @@ function get_user_posts(user_id, start, end) {
 function create_post_element(post_data) {
     const post = document.createElement('div');
     post.className = 'post';
+    // Doesn't allow to send the whole post data to editPost, returns an error
+    // Tries to place the actualy data -> dict and send it raw, ofc it doesn't work
     post.innerHTML = `
-        <div class="post-heading" onclick='showProfile(${post_data['op']['id']})'>
+        <div class="post-heading" onclick='showProfile(${post_data['op']['id']}, 0, 3)'>
             <img class="post-pfp" src="${post_data['op']['pfp']}" alt="Profile Picture"> - 
             ${post_data['op']['username']}
         </div>
+        <button class='btn-edit-post' onclick='editPost(${post_data['id']})'>Edit</button>
         <div class="post-body">
             <p class="post-date">${post_data['created_at']}</p>
             <p class="post-content">${post_data['content']}</p>
@@ -228,6 +234,7 @@ function followingPage(start, end) {
     document.querySelector('#all-posts-view').style.display = 'none';
     document.querySelector('#profile-view').style.display = 'none';
     document.querySelector('#following-view').style.display = 'block';
+    document.querySelector('#edit-post-view').style.display = 'none';
     page = 'following';
 
     document.querySelector('#following-view').innerHTML = '';
@@ -245,4 +252,31 @@ function getFollowingPosts(start, end) {
                 data.posts.forEach(post => add_post(post, section = '#following-view'))
             }
         });
+}
+
+function editPost(post_id) {
+    alert('Tried to edit.')
+    // Show another page where the user can edit the post
+    document.querySelector('#all-posts-view').style.display = 'none';
+    document.querySelector('#profile-view').style.display = 'none';
+    document.querySelector('#following-view').style.display = 'none';
+    document.querySelector('#edit-post-view').style.display = 'block';
+    page = 'edit-post';
+
+    // Get the edit form
+    editForm = document.querySelector('#edit-form');
+    // Doesn't work
+    editForm.attributes.action = `/api/v1/edit-post/${post_id}`;
+
+    // Get the single post
+    fetch(`api/v1/posts/${post_id}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            // Try to prefil the content field, and load the correct image
+
+            // document.querySelector('#id_content').innerHTML = data['content'];
+            // document.querySelectorAll('#id_content').forEach(element => element.attributes.value = 'test');
+        });
+
 }

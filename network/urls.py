@@ -33,6 +33,8 @@ urlpatterns = [
     path(
         'api/v1/followed-posts/start=<int:start>&end=<int:end>',
         views.followed_posts, name='followed-posts'),
+
+    path('api/v1/edit-post/<int:post_id>', views.edit_post, name='edit_post'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
