@@ -211,8 +211,11 @@ function create_post_element(post_data) {
         editBtn = document.createElement('div');
         editBtn.innerHTML = 'Edit';
         // fix this
-        editBtn.attributes.onclick = editPost(post_data);
-        editBtn.className = 'btn-edit-post';
+        // editBtn.attributes.onclick = editPost(post_data);
+        editBtn.className = 'btn-edit-post nav-link nav-link-own';
+        editBtn.addEventListener('click', () => {
+            editPost(post_data);
+        });
 
         post.appendChild(editBtn);
         // post.innerHTML += `<button class='btn-edit-post' onclick='editPost(${post_data['id']})'>Edit</button>`;
@@ -289,11 +292,12 @@ function editPost(post) {
     fetch(`api/v1/posts/${post['id']}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            // console.log(data);
+            console.log('post edit');
             // Try to prefil the content field, and load the correct image
 
             // document.querySelector('#id_content').innerHTML = data['content'];
-            // document.querySelectorAll('#id_content').forEach(element => element.attributes.value = 'test');
+            document.querySelectorAll('#id_content').forEach(element => element.attributes.value = 'test');
         });
 
 }
