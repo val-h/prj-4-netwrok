@@ -1,8 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 from .models import User, Post
 from .forms import PostForm
@@ -68,6 +71,7 @@ def register(request):
 
 
 # Standard views
+@login_required
 def create_post(request):
     if request.method == 'POST':
         # Never forget request.FILES
@@ -79,6 +83,7 @@ def create_post(request):
             return redirect('index')
 
 
+# Not in use
 def edit_post(request, post_id):
     if request.method == 'POST':
         post = Post.objects.get(id=post_id)
@@ -97,6 +102,8 @@ def posts(request, start=1, end=10):
         })
 
 
+@login_required
+@csrf_exempt
 def post(request, post_id):
     try:
         post = Post.objects.get(id=post_id)
@@ -108,8 +115,16 @@ def post(request, post_id):
             "post": [post.serialize()]
         })
     elif request.method == 'PUT':
-        # update the post
-        pass
+        try:
+            data = json.loads(request.body)
+            print(data.get('content'))
+            post.content = data.get("content")
+            post.save()
+            return JsonResponse({"message": "Post updated"}, status=201)
+        except Exception:
+            return JsonResponse({"message": "Update failed."}, status=501)
+
+    # Not in use
     elif request.method == 'DELETE':
         del post
         return JsonResponse({"message": "Post deleted."}, status=201)
@@ -155,6 +170,7 @@ def follow_count(request, user_id):
         })
 
 
+@login_required
 def follow(request, user_id):
     user = User.objects.get(id=user_id)
     if request.user not in user.followers.all():
@@ -170,6 +186,7 @@ def follow(request, user_id):
             status=201)
 
 
+@login_required
 def followed_posts(request, start, end):
     posts = []
     for followed_user in request.user.following.all():

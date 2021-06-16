@@ -3,12 +3,13 @@ let page;
 // Current ID of User profile being displayed
 let usrProfileId;
 
+
+
 document.addEventListener('DOMContentLoaded', () => {
 
-    document.querySelector('#all-posts-view').style.display = 'block';
-    document.querySelector('#profile-view').style.display = 'none';
-    document.querySelector('#following-view').style.display = 'none';
-    document.querySelector('#edit-post-view').style.display = 'none';
+
+    // Set the view
+    changeView('all-posts-view');
     page = 'all-posts';
 
     let counter = 0;
@@ -45,10 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // All posts button
     document.querySelector('#all-posts').onclick = () => {
         // Change to the appropriate view
-        document.querySelector('#all-posts-view').style.display = 'block';
-        document.querySelector('#profile-view').style.display = 'none';
-        document.querySelector('#following-view').style.display = 'none';
-        document.querySelector('#edit-post-view').style.display = 'none';
+        changeView('all-posts-view');
         page = 'all-posts';
 
         // clear current view
@@ -96,10 +94,7 @@ function add_post(contents, section) {
 
 function showProfile(profile_id, start, end) {
     // Change to the appropriate view
-    document.querySelector('#all-posts-view').style.display = 'none';
-    document.querySelector('#profile-view').style.display = 'block';
-    document.querySelector('#following-view').style.display = 'none';
-    document.querySelector('#edit-post-view').style.display = 'none';
+    changeView('profile-view');
     page = 'profile';
 
     // Set the user profile
@@ -199,7 +194,11 @@ function create_post_element(post_data) {
         </div>
         <div class="post-body">
             <p class="post-date">${post_data['created_at']}</p>
-            <p class="post-content">${post_data['content']}</p>
+            <div class="content-field">
+
+                <p class="post-content">${post_data['content']}</p>
+
+            </div>
             <img class="post-img" src="${post_data['image']}" alt="image">
         </div>
         <div class="post-footer">
@@ -208,21 +207,64 @@ function create_post_element(post_data) {
     `;
 
     if (usrProfileId === post_data['op']['id']) {
-        editBtn = document.createElement('div');
+        editBtn = document.createElement('button');
         editBtn.innerHTML = 'Edit';
         // fix this
         // editBtn.attributes.onclick = editPost(post_data);
-        editBtn.className = 'btn-edit-post nav-link nav-link-own';
+        editBtn.className = 'btn-edit-post nav-link-own';
         editBtn.addEventListener('click', () => {
-            editPost(post_data);
+            // editPost(post_data); Refactoring
+            console.log(`Editing post ${post_data['id']}`)
+
+            contentField = post.getElementsByClassName('content-field')[0];
+            postContent = post.getElementsByClassName('post-content')[0];
+            postContent.style.display = 'none';
+
+            // Create a form 
+            // editForm = document.createElement('form');
+            // editForm.attributes.method = 'POST';
+            // Set up csrf - removed
+            // let csrftoken = getCookie('csrftoken');
+            // editForm.innerHTML = `<input type="hidden" name='csrfmiddlewaretoken' value='${csrftoken}'`;
+
+            // Create a new field
+            inputArea = document.createElement('input');
+            inputArea.attributes.type = 'text';
+            inputArea.className = 'input-area';
+            inputArea.value = postContent.innerHTML;
+            contentField.appendChild(inputArea);
+
+            // Set the buttons
+            editBtn.style.display = 'none'; // Doens't work
+
+            saveBtn = document.createElement('button');
+            saveBtn.innerHTML = 'Save';
+            saveBtn.className = 'btn-edit-post nav-link-own';
+            saveBtn.addEventListener('click', () => {
+                // Save the updated post content
+                context = {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        'content': inputArea.value
+                    })
+                };
+                fetch(`/api/v1/posts/${post_data['id']}`, context)
+                    .then(result => result.json())
+                    .then(data => {
+                        console.log(data);
+                        saveBtn.style.display = 'none';
+                        // Temporary
+                        showProfile(post_data.op['id'], 0, 3);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            });
+            post.appendChild(saveBtn);
         });
 
         post.appendChild(editBtn);
-        // post.innerHTML += `<button class='btn-edit-post' onclick='editPost(${post_data['id']})'>Edit</button>`;
     }
-    // console.log(post.getElementsByClassName('post-content'));
-    // post_content = post.getElementsByClassName('post-content');
-    // post_content.style.display = 'none';
     return post;
 }
 
@@ -249,10 +291,7 @@ function follow(user_id) {
 // Following page
 function followingPage(start, end) {
     // Change to the appropriate view
-    document.querySelector('#all-posts-view').style.display = 'none';
-    document.querySelector('#profile-view').style.display = 'none';
-    document.querySelector('#following-view').style.display = 'block';
-    document.querySelector('#edit-post-view').style.display = 'none';
+    changeView('following-view');
     page = 'following';
 
     document.querySelector('#following-view').innerHTML = '';
@@ -272,32 +311,84 @@ function getFollowingPosts(start, end) {
         });
 }
 
-function editPost(post) {
-    alert('Tried to edit.')
-    // Show another page where the user can edit the post
+// function editPost(post) {
+//     alert('Tried to edit.')
+//     // Show another page where the user can edit the post
+//     document.querySelector('#all-posts-view').style.display = 'none';
+//     document.querySelector('#profile-view').style.display = 'none';
+//     document.querySelector('#following-view').style.display = 'none';
+//     document.querySelector('#edit-post-view').style.display = 'block';
+//     page = 'edit-post';
+
+//     // Get the edit form
+//     editForm = document.querySelector('#edit-form');
+//     // Doesn't work
+//     editForm.attributes.action = `/api/v1/edit-post/${post['id']}`;
+
+
+//     // No longer needed
+//     // Get the single post
+//     fetch(`api/v1/posts/${post['id']}`)
+//         .then(response => response.json())
+//         .then(data => {
+//             // console.log(data);
+//             console.log('post edit');
+//             // Try to prefil the content field, and load the correct image
+
+//             // document.querySelector('#id_content').innerHTML = data['content'];
+//             document.querySelectorAll('#id_content').forEach(element => element.attributes.value = 'test');
+//         });
+
+// }
+
+function changeView(view) {
+    // Hide all
     document.querySelector('#all-posts-view').style.display = 'none';
     document.querySelector('#profile-view').style.display = 'none';
     document.querySelector('#following-view').style.display = 'none';
-    document.querySelector('#edit-post-view').style.display = 'block';
-    page = 'edit-post';
 
-    // Get the edit form
-    editForm = document.querySelector('#edit-form');
-    // Doesn't work
-    editForm.attributes.action = `/api/v1/edit-post/${post['id']}`;
-
-
-    // No longer needed
-    // Get the single post
-    fetch(`api/v1/posts/${post['id']}`)
-        .then(response => response.json())
-        .then(data => {
-            // console.log(data);
-            console.log('post edit');
-            // Try to prefil the content field, and load the correct image
-
-            // document.querySelector('#id_content').innerHTML = data['content'];
-            document.querySelectorAll('#id_content').forEach(element => element.attributes.value = 'test');
-        });
-
+    document.querySelector(`#${view}`).style.display = 'block';
 }
+
+
+// removed the csrf token needed for the specific call
+
+// DJANGO PROVIDED CODE FOR CSRF TOKENS
+
+//enable csrf post ajax
+
+//This function gets cookie with a given name
+// function getCookie(name) {
+//     var cookieValue = null;
+//     if (document.cookie && document.cookie != '') {
+//         var cookies = document.cookie.split(';');
+//         for (var i = 0; i < cookies.length; i++) {
+//             var cookie = jQuery.trim(cookies[i]);
+//             // Does this cookie string begin with the name we want?
+//             if (cookie.substring(0, name.length + 1) == (name + '=')) {
+//                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+//                 break;
+//             }
+//         }
+//     }
+//     return cookieValue;
+// }
+
+// /*
+// The functions below will create a header with csrftoken
+// */
+
+//     function csrfSafeMethod(method) {
+//         // these HTTP methods do not require CSRF protection
+//         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+//     }
+
+//     $.ajaxSetup({
+//         beforeSend: function (xhr, settings) {
+//             if (!csrfSafeMethod(settings.type) && !this.crossDomain &&
+//                 (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url)))) {
+//                 // Only send the token to relative URLs i.e. locally.
+//                 xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+//             }
+//         }
+//     });
