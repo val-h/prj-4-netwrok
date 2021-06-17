@@ -180,13 +180,9 @@ function get_user_posts(user_id, start, end) {
         });
 }
 
-
-// Refactor this, don't make a new page, just replace the content section with a text area and add a button
 function create_post_element(post_data) {
     const post = document.createElement('div');
     post.className = 'post';
-    // Doesn't allow to send the whole post data to editPost, returns an error
-    // Tries to place the actualy data -> dict and send it raw, ofc it doesn't work
     post.innerHTML = `
         <div class="post-heading" onclick='showProfile(${post_data['op']['id']}, 0, 3)'>
             <img class="post-pfp" src="${post_data['op']['pfp']}" alt="Profile Picture"> - 
@@ -195,22 +191,53 @@ function create_post_element(post_data) {
         <div class="post-body">
             <p class="post-date">${post_data['created_at']}</p>
             <div class="content-field">
-
                 <p class="post-content">${post_data['content']}</p>
-
             </div>
             <img class="post-img" src="${post_data['image']}" alt="image">
         </div>
         <div class="post-footer">
-            <p class="post-likes">&#128151; 🤍 ${post_data['likes']}</p>
+            <p class="post-likes">
+            </p>
         </div>
     `;
+
+    // Set up like button
+    likeBtn = document.createElement('span');
+    likeBtn.className = 'like-btn';
+    // likeBtn = post.getElementsByClassName('like-btn')[0];
+    // likeBtn = post['post-footer']['post-likes']['like-btn'];
+    if (usrProfileId in post_data['likes']) {
+        likeBtn.innerHTML = '&#128151; ' + post_data['likes'].length;
+    } else {
+        likeBtn.innerHTML = '🤍 ' + post_data['likes'].length;
+    }
+
+    // Like function
+    likeBtn.addEventListener('click', () => {
+        fetch(`/api/v1/like-post/${post_data['id']}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                if (data['message'] === 'Successfully liked.') {
+                    likeBtn.innerHTML = '&#128151; ' + data['likes'].length;
+                } else if (data["message"] === 'Successfully unliked.') {
+                    likeBtn.innerHTML = '🤍 ' + data['likes'].length;
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            });
+    });
+    post.appendChild(likeBtn);
+    // post.getElementsByClassName('post-likes')[0].appendChild(likeBtn);
+    // console.log(post.childNodes)
+    // post.childNodes[6].appendChild(likeBtn);
+
+    // &#128151; - red heart
 
     if (usrProfileId === post_data['op']['id']) {
         editBtn = document.createElement('button');
         editBtn.innerHTML = 'Edit';
-        // fix this
-        // editBtn.attributes.onclick = editPost(post_data);
         editBtn.className = 'btn-edit-post nav-link-own';
         editBtn.addEventListener('click', () => {
             // editPost(post_data); Refactoring
@@ -219,13 +246,6 @@ function create_post_element(post_data) {
             contentField = post.getElementsByClassName('content-field')[0];
             postContent = post.getElementsByClassName('post-content')[0];
             postContent.style.display = 'none';
-
-            // Create a form 
-            // editForm = document.createElement('form');
-            // editForm.attributes.method = 'POST';
-            // Set up csrf - removed
-            // let csrftoken = getCookie('csrftoken');
-            // editForm.innerHTML = `<input type="hidden" name='csrfmiddlewaretoken' value='${csrftoken}'`;
 
             // Create a new field
             inputArea = document.createElement('input');
@@ -255,6 +275,7 @@ function create_post_element(post_data) {
                         saveBtn.style.display = 'none';
                         // Temporary
                         showProfile(post_data.op['id'], 0, 3);
+                        // TODO - load the <p> back with the updated content
                     })
                     .catch(err => {
                         console.log(err);
@@ -262,7 +283,6 @@ function create_post_element(post_data) {
             });
             post.appendChild(saveBtn);
         });
-
         post.appendChild(editBtn);
     }
     return post;
@@ -311,84 +331,12 @@ function getFollowingPosts(start, end) {
         });
 }
 
-// function editPost(post) {
-//     alert('Tried to edit.')
-//     // Show another page where the user can edit the post
-//     document.querySelector('#all-posts-view').style.display = 'none';
-//     document.querySelector('#profile-view').style.display = 'none';
-//     document.querySelector('#following-view').style.display = 'none';
-//     document.querySelector('#edit-post-view').style.display = 'block';
-//     page = 'edit-post';
-
-//     // Get the edit form
-//     editForm = document.querySelector('#edit-form');
-//     // Doesn't work
-//     editForm.attributes.action = `/api/v1/edit-post/${post['id']}`;
-
-
-//     // No longer needed
-//     // Get the single post
-//     fetch(`api/v1/posts/${post['id']}`)
-//         .then(response => response.json())
-//         .then(data => {
-//             // console.log(data);
-//             console.log('post edit');
-//             // Try to prefil the content field, and load the correct image
-
-//             // document.querySelector('#id_content').innerHTML = data['content'];
-//             document.querySelectorAll('#id_content').forEach(element => element.attributes.value = 'test');
-//         });
-
-// }
-
 function changeView(view) {
     // Hide all
     document.querySelector('#all-posts-view').style.display = 'none';
     document.querySelector('#profile-view').style.display = 'none';
     document.querySelector('#following-view').style.display = 'none';
 
+    // Show the requested view
     document.querySelector(`#${view}`).style.display = 'block';
 }
-
-
-// removed the csrf token needed for the specific call
-
-// DJANGO PROVIDED CODE FOR CSRF TOKENS
-
-//enable csrf post ajax
-
-//This function gets cookie with a given name
-// function getCookie(name) {
-//     var cookieValue = null;
-//     if (document.cookie && document.cookie != '') {
-//         var cookies = document.cookie.split(';');
-//         for (var i = 0; i < cookies.length; i++) {
-//             var cookie = jQuery.trim(cookies[i]);
-//             // Does this cookie string begin with the name we want?
-//             if (cookie.substring(0, name.length + 1) == (name + '=')) {
-//                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-//                 break;
-//             }
-//         }
-//     }
-//     return cookieValue;
-// }
-
-// /*
-// The functions below will create a header with csrftoken
-// */
-
-//     function csrfSafeMethod(method) {
-//         // these HTTP methods do not require CSRF protection
-//         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-//     }
-
-//     $.ajaxSetup({
-//         beforeSend: function (xhr, settings) {
-//             if (!csrfSafeMethod(settings.type) && !this.crossDomain &&
-//                 (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url)))) {
-//                 // Only send the token to relative URLs i.e. locally.
-//                 xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-//             }
-//         }
-//     });

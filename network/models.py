@@ -38,20 +38,26 @@ class User(AbstractUser):
 class Post(models.Model):
     id = models.AutoField(primary_key=True)
     op = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='posts')
+        User,
+        on_delete=models.CASCADE,
+        related_name='posts')
     created_at = models.DateTimeField(auto_now_add=True)
     content = models.TextField()
     image = models.ImageField(upload_to='media', blank=True)
-    likes = models.IntegerField(default=0)
+    likes = models.ManyToManyField(
+        User,
+        blank=True,
+        related_name='liked_posts')
 
     def serialize(self):
+        likes = [like.id for like in self.likes.all()]
         return {
             "id": self.id,
             "op": self.op.serialize(),
             "content": self.content,
             "image": self.image.url,
             "created_at": self.created_at,
-            "likes": self.likes,
+            "likes": likes,
         }
 
 

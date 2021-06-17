@@ -203,3 +203,21 @@ def followed_posts(request, start, end):
         return JsonResponse({"posts": posts[start:end]}, status=201)
     else:
         return JsonResponse({"message": "No posts"}, status=201)
+
+
+@login_required
+def like_post(request, post_id):
+    try:
+        post = Post.objects.get(id=post_id)
+        if request.user not in post.likes.all():
+            post.likes.add(request.user)
+            post.save()
+            return JsonResponse({"message": "Successfully liked."}, status=201)
+        else:
+            post.likes.remove(request.user)
+            post.save()
+            return JsonResponse(
+                {"message": "Successfully unliked.",
+                "likes": [like.id for like in post.likes.all()]}, status=201)
+    except Exception:
+        return JsonResponse({"message": "Failed to like."}, status=501)
