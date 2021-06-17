@@ -212,7 +212,7 @@ function create_post_element(post_data) {
         likeBtn.innerHTML = '🤍 ' + post_data['likes'].length;
     }
 
-    // Like function
+    // Like function - gives an error
     likeBtn.addEventListener('click', () => {
         fetch(`/api/v1/like-post/${post_data['id']}`)
             .then(response => response.json())
@@ -228,6 +228,7 @@ function create_post_element(post_data) {
                 console.log(err);
             });
     });
+    // doesn't append to the right post
     post.appendChild(likeBtn);
     // post.getElementsByClassName('post-likes')[0].appendChild(likeBtn);
     // console.log(post.childNodes)
