@@ -83,16 +83,6 @@ def create_post(request):
             return redirect('index')
 
 
-# Not in use
-def edit_post(request, post_id):
-    if request.method == 'POST':
-        post = Post.objects.get(id=post_id)
-        form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
-            post = form.save()
-            return redirect('index')
-
-
 # API
 def posts(request, start=1, end=10):
     if request.method == 'GET':
@@ -212,12 +202,16 @@ def like_post(request, post_id):
         if request.user not in post.likes.all():
             post.likes.add(request.user)
             post.save()
-            return JsonResponse({"message": "Successfully liked."}, status=201)
+            return JsonResponse({
+                "message": "Successfully liked.",
+                "likes": [like.id for like in post.likes.all()]},
+                status=201)
         else:
             post.likes.remove(request.user)
             post.save()
-            return JsonResponse(
-                {"message": "Successfully unliked.",
-                "likes": [like.id for like in post.likes.all()]}, status=201)
+            return JsonResponse({
+                "message": "Successfully unliked.",
+                "likes": [like.id for like in post.likes.all()]},
+                status=201)
     except Exception:
         return JsonResponse({"message": "Failed to like."}, status=501)

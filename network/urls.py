@@ -34,7 +34,6 @@ urlpatterns = [
         'api/v1/followed-posts/start=<int:start>&end=<int:end>',
         views.followed_posts, name='followed-posts'),
 
-    path('api/v1/edit-post/<int:post_id>', views.edit_post, name='edit_post'),
     path('api/v1/like-post/<int:post_id>', views.like_post, name='like_post'),
 ]
 if settings.DEBUG:

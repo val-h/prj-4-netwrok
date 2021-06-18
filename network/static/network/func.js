@@ -196,8 +196,6 @@ function create_post_element(post_data) {
             <img class="post-img" src="${post_data['image']}" alt="image">
         </div>
         <div class="post-footer">
-            <p class="post-likes">
-            </p>
         </div>
     `;
 
@@ -212,7 +210,7 @@ function create_post_element(post_data) {
         likeBtn.innerHTML = '🤍 ' + post_data['likes'].length;
     }
 
-    // Like function - gives an error
+    // Like function
     likeBtn.addEventListener('click', () => {
         fetch(`/api/v1/like-post/${post_data['id']}`)
             .then(response => response.json())
@@ -229,10 +227,8 @@ function create_post_element(post_data) {
             });
     });
     // doesn't append to the right post
-    post.appendChild(likeBtn);
-    // post.getElementsByClassName('post-likes')[0].appendChild(likeBtn);
-    // console.log(post.childNodes)
-    // post.childNodes[6].appendChild(likeBtn);
+    post.querySelector('.post-footer').appendChild(likeBtn);
+    // post.getElementsByClassName('post-footer')[0].appendChild(likeBtn);
 
     // &#128151; - red heart
 
@@ -241,7 +237,6 @@ function create_post_element(post_data) {
         editBtn.innerHTML = 'Edit';
         editBtn.className = 'btn-edit-post nav-link-own';
         editBtn.addEventListener('click', () => {
-            // editPost(post_data); Refactoring
             console.log(`Editing post ${post_data['id']}`)
 
             contentField = post.getElementsByClassName('content-field')[0];
