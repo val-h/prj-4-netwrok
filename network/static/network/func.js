@@ -120,7 +120,6 @@ function setProfile(profile_id, start, end) {
             // Terrible implementation but i have no better ideas at 3am
             usrProfileId = data.user['id'];
 
-            // console.log(data['is_current_user'])
             let profile_view = document.querySelector('#profile-view');
             profile_view.innerHTML = `
                 <h1>${data.user['username']}</h1>
@@ -200,36 +199,34 @@ function create_post_element(post_data) {
     `;
 
     // Set up like button
-    likeBtn = document.createElement('span');
+    likeBtn = document.createElement('button');
     likeBtn.className = 'like-btn';
-    // likeBtn = post.getElementsByClassName('like-btn')[0];
-    // likeBtn = post['post-footer']['post-likes']['like-btn'];
-    if (usrProfileId in post_data['likes']) {
-        likeBtn.innerHTML = '&#128151; ' + post_data['likes'].length;
+    post.querySelector('.post-footer').appendChild(likeBtn);
+    console.log('Posta data likes: ', post_data['likes'])
+    // if (usrProfileId in post_data['likes']) {
+    if (post_data['likes'].indexOf(usrProfileId)) {
+        post.querySelector('.like-btn').innerHTML = '&#128151; ' + post_data['likes'].length;
     } else {
-        likeBtn.innerHTML = '🤍 ' + post_data['likes'].length;
+        post.querySelector('.like-btn').innerHTML = '🤍 ' + post_data['likes'].length;
     }
 
     // Like function
     likeBtn.addEventListener('click', () => {
+        console.log(likeBtn, 'clicked, chilf of', post);
         fetch(`/api/v1/like-post/${post_data['id']}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
                 if (data['message'] === 'Successfully liked.') {
-                    likeBtn.innerHTML = '&#128151; ' + data['likes'].length;
+                    post.querySelector('.like-btn').innerHTML = '&#128151; ' + data['likes'].length;
                 } else if (data["message"] === 'Successfully unliked.') {
-                    likeBtn.innerHTML = '🤍 ' + data['likes'].length;
+                    post.querySelector('.like-btn').innerHTML = '🤍 ' + data['likes'].length;
                 }
             })
             .catch(err => {
                 console.log(err);
             });
     });
-    // doesn't append to the right post
-    post.querySelector('.post-footer').appendChild(likeBtn);
-    // post.getElementsByClassName('post-footer')[0].appendChild(likeBtn);
-
     // &#128151; - red heart
 
     if (usrProfileId === post_data['op']['id']) {
@@ -251,7 +248,8 @@ function create_post_element(post_data) {
             contentField.appendChild(inputArea);
 
             // Set the buttons
-            editBtn.style.display = 'none'; // Doens't work
+            // editBtn.style.display = 'none'; // Doens't work
+            post.querySelector('.btn-edit-post').style.display = 'none'; // fixed
 
             saveBtn = document.createElement('button');
             saveBtn.innerHTML = 'Save';
