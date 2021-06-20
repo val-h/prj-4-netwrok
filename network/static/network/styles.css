@@ -8,28 +8,28 @@
   display: none; }
 
 #posts {
-  margin: 25px 15px;
   padding: 12px;
-  border: 1px solid gray;
-  width: 55%;
-  max-width: 1000px;
+  max-width: 1200px;
   min-width: 400px; }
 
-#post-form {
-  margin: 30px 15px;
-  padding: 7px;
-  border: 3px solid skyblue;
-  border-radius: 3px;
-  width: 55%;
-  max-width: 1000px;
-  min-width: 400px; }
+#form-wrapper {
+  display: flex;
+  justify-content: center; }
+  #form-wrapper #post-form {
+    margin: 30px 0;
+    padding: 7px;
+    box-shadow: 0 0 15px 0.01px #b4b4b4;
+    border-radius: 3px;
+    max-width: 700px;
+    min-width: 400px; }
 
 .post {
-  border: 1px dashed skyblue;
-  border-radius: 3px;
+  box-shadow: 0 0 20px 0.1px #919191;
+  border-radius: 4px;
   background-color: whitesmoke;
-  margin-bottom: 10px; }
+  margin-bottom: 27px; }
   .post .post-heading {
+    padding: 7px 10px;
     font-weight: 700;
     font-size: 18px;
     cursor: pointer; }
@@ -37,25 +37,81 @@
       width: 40px;
       height: 40px;
       border-radius: 50%; }
-  .post .post-body img {
-    max-height: 200px; }
-  .post .post-footer .heart {
-    cursor: pointer; }
+    .post .post-heading .edit-section .btn-edit-post {
+      float: right;
+      border: none;
+      outline: none;
+      font-weight: 700;
+      color: gray;
+      margin: 7px 12px; }
+  .post .post-body .post-date {
+    padding: 7px 10px; }
+  .post .post-body .img-wrapper {
+    text-align: center;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    margin-top: 12px;
+    background-color: #fffbf8;
+    max-width: 100%; }
+    .post .post-body .img-wrapper img {
+      max-height: 1000px;
+      max-width: 700px; }
+  .post .post-body .content-field {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start; }
+    .post .post-body .content-field .post-content {
+      padding: 7px 10px;
+      margin-left: 4%; }
+    .post .post-body .content-field .content-input {
+      padding: 7px 10px;
+      width: 92%;
+      margin-left: 4%;
+      background-color: #e6e3df;
+      border: none;
+      outline: none; }
+  .post .post-footer {
+    padding: 7px 10px; }
 
 #profile-view {
   display: none; }
-  #profile-view #profile-pfp {
-    border-radius: 50%;
-    width: 300px;
-    height: 300px; }
+  #profile-view #profile-section {
+    text-align: center;
+    margin-bottom: 27px;
+    box-shadow: 0 0 12px 1px #f5f1f1; }
+    #profile-view #profile-section #profile-pfp {
+      border-radius: 50%;
+      width: 300px;
+      height: 300px; }
 
 #following-view {
   display: none; }
 
-#edit-post-view {
-  display: none; }
+#follow-user {
+  margin-top: 22px;
+  padding: 7px 18px;
+  font-size: 18px;
+  border: none; }
+
+#follow-user:focus {
+  border: none;
+  outline: none; }
 
 .nav-link-own {
-  cursor: pointer; }
+  cursor: pointer;
+  border: none; }
+
+.nav-link-own:focus {
+  cursor: pointer;
+  border: none;
+  outline: none; }
+
+.like-btn {
+  border: none;
+  outline: none; }
+
+.like-btn:focus, .btn-edit-post:focus {
+  border: none;
+  outline: none; }
 
 /*# sourceMappingURL=styles.css.map */

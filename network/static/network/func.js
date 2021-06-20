@@ -109,22 +109,23 @@ function setProfile(profile_id, start, end) {
     fetch(`/api/v1/profile${id}`)
         .then(response => response.json())
         .then(data => {
-            let profile_view = document.querySelector('#profile-view');
-            profile_view.innerHTML = `
+            let profile_section = document.querySelector('#profile-section');
+            let user_posts = document.querySelector('#user-posts');
+            profile_section.innerHTML = `
                 <h1>${data.user['username']}</h1>
                 <div id='follow-section'></div>
             `;
 
             // Staff check
             if (data.user['is_staff']) {
-                profile_view.innerHTML += `<div>Is staf? - BIG BOSS</div>`;
+                profile_section.innerHTML += `<div>Is staf? - BIG BOSS</div>`;
             }
 
             // Profile Picture check
             if (data.user['pfp']) {
-                profile_view.innerHTML += `<img id="profile-pfp" src="${data.user['pfp']}" alt="Profile Picture">`;
+                profile_section.innerHTML += `<img id="profile-pfp" src="${data.user['pfp']}" alt="Profile Picture">`;
             } else {
-                profile_view.innerHTML += 'No profile Picture :<';
+                profile_section.innerHTML += 'No profile Picture :<';
             }
 
             // Is current user check
@@ -136,7 +137,7 @@ function setProfile(profile_id, start, end) {
                     btnFollowText = 'Follow';
                 }
                 // Display the follow/Unfollow button, temp func :D
-                profile_view.innerHTML += `
+                profile_section.innerHTML += `
                     <div><button id="follow-user" onclick='follow(${data.user['id']}, ${start}, ${end})'>${btnFollowText}</button></div>
                 `;
             }
@@ -152,7 +153,8 @@ function setProfile(profile_id, start, end) {
                         `;
                 });
 
-            profile_view.innerHTML += '<div id="user-posts"></div>'
+            // Clear the view
+            user_posts.innerHTML = '';
             // Load the posts for that user
             get_user_posts(data.user['id'], start, end);
         });
@@ -169,26 +171,33 @@ function get_user_posts(user_id, start, end) {
 function create_post_element(post_data) {
     const post = document.createElement('div');
     post.className = 'post';
+    let date = new Date(post_data['created_at']).toUTCString();
     post.innerHTML = `
-        <div class="post-heading" onclick='showProfile(${post_data['op']['id']}, 0, 3)'>
-            <img class="post-pfp" src="${post_data['op']['pfp']}" alt="Profile Picture"> - 
-            ${post_data['op']['username']}
+        <div class="post-heading">
+            <span onclick='showProfile(${post_data['op']['id']}, 0, 3)'>
+                <img class="post-pfp" src="${post_data['op']['pfp']}" alt="Profile Picture"> - 
+                ${post_data['op']['username']}
+            </span>
+            <span class="edit-section"></span>
         </div>
         <div class="post-body">
-            <p class="post-date">${post_data['created_at']}</p>
+            <p class="post-date">${date}</p>
             <div class="content-field">
-                <p class="post-content">${post_data['content']}</p>
+                <span class="post-content">${post_data['content']}</span>
             </div>
-            <img class="post-img" src="${post_data['image']}" alt="image">
+            <div class="img-wrapper">
+                <img class="post-img" src="${post_data['image']}" alt="image">
+            </div>
         </div>
         <div class="post-footer">
+            <span class="like-section"></span>
         </div>
     `;
 
     // Set up like button
     likeBtn = document.createElement('button');
     likeBtn.className = 'like-btn';
-    post.querySelector('.post-footer').appendChild(likeBtn);
+    post.querySelector('.like-section').appendChild(likeBtn);
     if (post_data['likes'].indexOf(usrProfileId) >= 0) {
         post.querySelector('.like-btn').innerHTML = '&#128151; ' + post_data['likes'].length;
     } else {
@@ -213,10 +222,11 @@ function create_post_element(post_data) {
             });
     });
 
+    // Edit button
     if (usrProfileId === post_data['op']['id']) {
         editBtn = document.createElement('button');
         editBtn.innerHTML = 'Edit';
-        editBtn.className = 'btn-edit-post nav-link-own';
+        editBtn.className = 'btn-edit-post';
         editBtn.addEventListener('click', () => {
             contentField = post.getElementsByClassName('content-field')[0];
             postContent = post.getElementsByClassName('post-content')[0];
@@ -225,7 +235,7 @@ function create_post_element(post_data) {
             // Create a new field
             inputArea = document.createElement('input');
             inputArea.attributes.type = 'text';
-            inputArea.className = 'input-area';
+            inputArea.className = 'content-input';
             inputArea.value = postContent.innerHTML;
             contentField.appendChild(inputArea);
 
@@ -235,7 +245,7 @@ function create_post_element(post_data) {
 
             saveBtn = document.createElement('button');
             saveBtn.innerHTML = 'Save';
-            saveBtn.className = 'btn-edit-post nav-link-own';
+            saveBtn.className = 'btn-edit-post';
             saveBtn.addEventListener('click', () => {
                 // Save the updated post content
                 context = {
@@ -250,7 +260,7 @@ function create_post_element(post_data) {
                         // Hide the save button
                         saveBtn.style.display = 'none';
                         // Update the post's content
-                        contentField.innerHTML = `<p class="post-content">${inputArea.value}</p>`;
+                        contentField.innerHTML = `<span class="post-content">${inputArea.value}</span>`;
                         // Show again the edit button
                         editBtn.style.display = 'inline';
                     })
@@ -258,9 +268,9 @@ function create_post_element(post_data) {
                         console.log(err);
                     });
             });
-            post.appendChild(saveBtn);
+            post.getElementsByClassName('edit-section')[0].appendChild(saveBtn);
         });
-        post.appendChild(editBtn);
+        post.getElementsByClassName('edit-section')[0].appendChild(editBtn);
     }
     return post;
 }
