@@ -215,3 +215,9 @@ def like_post(request, post_id):
                 status=201)
     except Exception:
         return JsonResponse({"message": "Failed to like."}, status=501)
+
+
+@login_required
+def user_id(request):
+    if request.method == 'GET':
+        return JsonResponse({"user_id": request.user.id}, status=201)

@@ -3,10 +3,8 @@ let page;
 // Current ID of User profile being displayed
 let usrProfileId;
 
-
-
 document.addEventListener('DOMContentLoaded', () => {
-
+    getUserID(); //not using cookies :<
 
     // Set the view
     changeView('all-posts-view');
@@ -20,8 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     resetCounterVars();
     // by default, load current posts
     get_all_posts(start, end);
-
-
     // Add window on scroll loading for posts TODO
     window.onscroll = () => {
         if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
@@ -41,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
-
 
     // All posts button
     document.querySelector('#all-posts').onclick = () => {
@@ -202,9 +197,7 @@ function create_post_element(post_data) {
     likeBtn = document.createElement('button');
     likeBtn.className = 'like-btn';
     post.querySelector('.post-footer').appendChild(likeBtn);
-    console.log('Posta data likes: ', post_data['likes'])
-    // if (usrProfileId in post_data['likes']) {
-    if (post_data['likes'].indexOf(usrProfileId)) {
+    if (post_data['likes'].indexOf(usrProfileId) >= 0) {
         post.querySelector('.like-btn').innerHTML = '&#128151; ' + post_data['likes'].length;
     } else {
         post.querySelector('.like-btn').innerHTML = '🤍 ' + post_data['likes'].length;
@@ -333,4 +326,15 @@ function changeView(view) {
 
     // Show the requested view
     document.querySelector(`#${view}`).style.display = 'block';
+}
+
+function getUserID() {
+    fetch('/api/v1/user-id')
+        .then(response => response.json())
+        .then(data => {
+            usrProfileId = data['user_id'];
+        })
+        .catch(err => {
+            console.log(err);
+        });
 }

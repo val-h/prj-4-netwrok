@@ -35,6 +35,7 @@ urlpatterns = [
         views.followed_posts, name='followed-posts'),
 
     path('api/v1/like-post/<int:post_id>', views.like_post, name='like_post'),
+    path('api/v1/user-id', views.user_id, name='user_id'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
