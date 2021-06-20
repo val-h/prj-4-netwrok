@@ -27,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
             end = start + quantity;
             counter = end + 1;
 
-            console.log(page);
             if (page === 'all-posts') {
                 get_all_posts(start, end);
             } else if (page === 'profile') {
@@ -77,7 +76,6 @@ function get_all_posts(start, end) {
     fetch(`/api/v1/posts/start=${start}&end=${end}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             data.posts.forEach(post => add_post(contents = post, section = '#posts'));
         })
 }
@@ -111,10 +109,6 @@ function setProfile(profile_id, start, end) {
     fetch(`/api/v1/profile${id}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data);
-            // Terrible implementation but i have no better ideas at 3am
-            usrProfileId = data.user['id'];
-
             let profile_view = document.querySelector('#profile-view');
             profile_view.innerHTML = `
                 <h1>${data.user['username']}</h1>
@@ -143,7 +137,7 @@ function setProfile(profile_id, start, end) {
                 }
                 // Display the follow/Unfollow button, temp func :D
                 profile_view.innerHTML += `
-                    <div><button id="follow-user" onclick='follow(${data.user['id']})'>${btnFollowText}</button></div>
+                    <div><button id="follow-user" onclick='follow(${data.user['id']}, ${start}, ${end})'>${btnFollowText}</button></div>
                 `;
             }
 
@@ -151,7 +145,6 @@ function setProfile(profile_id, start, end) {
             fetch(`/api/v1/u-follow-count/${data.user['id']}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
                     // Create the fileds
                     document.querySelector('#follow-section').innerHTML += `
                             <span>Followers: ${data.followers_data['followers']}</span>
@@ -161,7 +154,7 @@ function setProfile(profile_id, start, end) {
 
             profile_view.innerHTML += '<div id="user-posts"></div>'
             // Load the posts for that user
-            get_user_posts(usrProfileId, start, end);
+            get_user_posts(data.user['id'], start, end);
         });
 }
 
@@ -169,7 +162,6 @@ function get_user_posts(user_id, start, end) {
     fetch(`/api/v1/u-posts/${user_id}/start=${start}&end=${end}`)
         .then(response => response.json())
         .then(data => {
-            console.log('User posts:', data)
             data.posts.forEach(post => add_post(contents = post, section = '#user-posts'));
         });
 }
@@ -220,7 +212,6 @@ function create_post_element(post_data) {
                 console.log(err);
             });
     });
-    // &#128151; - red heart
 
     if (usrProfileId === post_data['op']['id']) {
         editBtn = document.createElement('button');
@@ -261,7 +252,7 @@ function create_post_element(post_data) {
                         console.log(data);
                         saveBtn.style.display = 'none';
                         // Temporary
-                        showProfile(post_data.op['id'], 0, 3);
+                        showProfile(post_data['op']['id'], 0, 3);
                         // TODO - load the <p> back with the updated content
                     })
                     .catch(err => {
@@ -285,14 +276,14 @@ function follow_count(user_id) {
         });
 }
 
-function follow(user_id) {
+function follow(user_id, start, end) {
     fetch(`/api/v1/follow/${user_id}`)
         .then(response => response.json())
         .then(data => {
             console.log(data);
         })
     // refresh the page after a while, give time to unfollow
-    setTimeout(setProfile, '100', user_id);
+    setTimeout(setProfile, '100', user_id, start, end);
 }
 
 // Following page
@@ -311,7 +302,6 @@ function getFollowingPosts(start, end) {
     fetch(`/api/v1/followed-posts/start=${start}&end=${end}`)
         .then(response => response.json())
         .then(data => {
-            console.log(data)
             if (data.posts) {
                 data.posts.forEach(post => add_post(post, section = '#following-view'))
             }
