@@ -218,8 +218,6 @@ function create_post_element(post_data) {
         editBtn.innerHTML = 'Edit';
         editBtn.className = 'btn-edit-post nav-link-own';
         editBtn.addEventListener('click', () => {
-            console.log(`Editing post ${post_data['id']}`)
-
             contentField = post.getElementsByClassName('content-field')[0];
             postContent = post.getElementsByClassName('post-content')[0];
             postContent.style.display = 'none';
@@ -249,11 +247,12 @@ function create_post_element(post_data) {
                 fetch(`/api/v1/posts/${post_data['id']}`, context)
                     .then(result => result.json())
                     .then(data => {
-                        console.log(data);
+                        // Hide the save button
                         saveBtn.style.display = 'none';
-                        // Temporary
-                        showProfile(post_data['op']['id'], 0, 3);
-                        // TODO - load the <p> back with the updated content
+                        // Update the post's content
+                        contentField.innerHTML = `<p class="post-content">${inputArea.value}</p>`;
+                        // Show again the edit button
+                        editBtn.style.display = 'inline';
                     })
                     .catch(err => {
                         console.log(err);
