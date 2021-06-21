@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         followingPage(start, end);
     };
 
+    // 
     function resetCounterVars() {
         counter = 0;
         start = counter;

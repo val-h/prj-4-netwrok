@@ -86,7 +86,7 @@ def create_post(request):
 # API
 def posts(request, start=1, end=10):
     if request.method == 'GET':
-        posts = Post.objects.order_by('-created_at').all()[start:end]
+        posts = Post.objects.order_by('-created_at').all()[start:end + 1]
         return JsonResponse({
             "posts": [post.serialize() for post in posts]
         })
@@ -146,7 +146,7 @@ def profile(request, profile_id=None):
 
 def user_posts(request, user_id, start, end):
     user = User.objects.get(id=user_id)
-    posts = user.posts.order_by('-created_at').all()[start:end]
+    posts = user.posts.order_by('-created_at').all()[start:end + 1]
     return JsonResponse({
         "posts": [post.serialize() for post in posts]
     })
@@ -190,7 +190,7 @@ def followed_posts(request, start, end):
 
     if posts:
         posts.sort(key=lambda post: post['created_at'], reverse=True)
-        return JsonResponse({"posts": posts[start:end]}, status=201)
+        return JsonResponse({"posts": posts[start:end + 1]}, status=201)
     else:
         return JsonResponse({"message": "No posts"}, status=201)
 
