@@ -116,6 +116,7 @@ def post(request, post_id):
 
     # Not in use
     elif request.method == 'DELETE':
+        # Probably wrong
         del post
         return JsonResponse({"message": "Post deleted."}, status=201)
 
