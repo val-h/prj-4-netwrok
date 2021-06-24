@@ -31,3 +31,9 @@ class PostTestCase(TestCase):
         user_posts = user.posts.all()
         self.assertEqual(len(user_posts), 1)
         self.assertEqual(user_posts[0].content, 'test content')
+
+    # Client tests
+    def test_index(self):
+        c = Client()
+        response = c.get('')
+        self.assertEqual(response.status_code, 200)

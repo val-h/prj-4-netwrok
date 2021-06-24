@@ -84,6 +84,7 @@ def create_post(request):
 
 
 # API
+@login_required
 def posts(request, start=1, end=10):
     if request.method == 'GET':
         posts = Post.objects.order_by('-created_at').all()[start:end + 1]
@@ -124,6 +125,7 @@ def post(request, post_id):
         return JsonResponse({"error": "Invalid request method."})
 
 
+@login_required
 def profile(request, profile_id=None):
     if request.method == 'GET':
         if profile_id is None:
@@ -145,6 +147,7 @@ def profile(request, profile_id=None):
         return JsonResponse({"error": "Invalid request method."})
 
 
+@login_required
 def user_posts(request, user_id, start, end):
     user = User.objects.get(id=user_id)
     posts = user.posts.order_by('-created_at').all()[start:end + 1]
@@ -153,6 +156,7 @@ def user_posts(request, user_id, start, end):
     })
 
 
+@login_required
 def follow_count(request, user_id):
     user = User.objects.get(id=user_id)
     if request.method == 'GET':

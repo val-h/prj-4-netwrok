@@ -51,11 +51,14 @@ class Post(models.Model):
 
     def serialize(self):
         likes = [like.id for like in self.likes.all()]
+        image_url = None
+        if self.image:
+            image_url = self.image.url
         return {
             "id": self.id,
             "op": self.op.serialize(),
             "content": self.content,
-            "image": self.image.url,
+            "image": image_url,
             "created_at": self.created_at,
             "likes": likes,
         }
