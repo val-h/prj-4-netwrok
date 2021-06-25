@@ -20,8 +20,6 @@ My take on Harvard's CS50Web Project4, a social networking webapp where Users ca
  All of this acompanied with a minimalistic design which 
 puts the focus on the images.
 
-Showcase of the project can be found on ***[odysee]***
-(https://odysee.com/@val_dev:3/web50-prj-4-network:c)
+Showcase of the project can be found on ***[odysee](https://odysee.com/@val_dev:3/web50-prj-4-network:c)***
 
-Live demo of the project can be found on ***[heroku]***
-(https://network-val.herokuapp.com)
+Live demo of the project can be found on ***[heroku](https://network-val.herokuapp.com)***
