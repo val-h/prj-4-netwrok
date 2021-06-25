@@ -22,7 +22,7 @@ puts the focus on the images.
 
 Showcase of the project can be found on ***[odysee](https://odysee.com/@val_dev:3/web50-prj-4-network:c)***
 
-*** ### DISCLAMER - Work in progress ***
+### ***DISCLAMER - Work in progress***
 
 ##### Current progress:
 - Up and Running
@@ -31,6 +31,6 @@ Showcase of the project can be found on ***[odysee](https://odysee.com/@val_dev:
 
 ##### Known issues:
 - Media files from the databaase(default posts) not displayed
-- Since the hosting is free, the server doesn't save files to the db after it starts to hibernate
+- Since the hosting is free, the server doesn't write to the db after it starts to hibernate
 
 Live demo of the project can be found on ***[heroku](https://network-val.herokuapp.com)***
