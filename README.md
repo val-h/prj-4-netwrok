@@ -1,7 +1,7 @@
 # Project 4 - Network
 
 ### Browse and create posts
-<img src="<img src="https://media.giphy.com/media/U7c2TesYruxCiw11qK/giphy.gif" width="1257">" width="300">
+<img src="<img src="https://media.giphy.com/media/B35ohusuDPH8uoRdZj/giphy.gif" width="1257" width="300">
 
 ### Follow the people you like!
 <img src="<img src="https://media.giphy.com/media/f2Op5CANzHRLBihsb7/giphy.gif" width="1257">" width="300">
