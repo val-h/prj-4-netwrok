@@ -11,7 +11,7 @@ class User(AbstractUser):
         related_name='following')
     pfp = models.ImageField(
         upload_to='media',
-        default='media/open_SUS.png',
+        default='media/default.jpg',
         blank=True)
 
     def serialize(self):

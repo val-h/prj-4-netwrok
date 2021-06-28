@@ -1,5 +1,11 @@
 # Project 4 - Network
 
+### Browse and create posts
+<img src="<img src="https://media.giphy.com/media/U7c2TesYruxCiw11qK/giphy.gif" width="1257">" width="300">
+
+### Follow the people you like!
+<img src="<img src="https://media.giphy.com/media/f2Op5CANzHRLBihsb7/giphy.gif" width="1257">" width="300">
+
 My take on Harvard's CS50Web Project4, a social networking webapp where Users can register and be able to do the following:
 
 - Create posts
@@ -23,6 +29,7 @@ puts the focus on the images.
 Showcase of the project can be found on ***[odysee](https://odysee.com/@val_dev:3/web50-prj-4-network:c)***
 
 ### ***DISCLAMER - Work in progress***
+Live demo of the project can be found on ***[heroku](https://network-val.herokuapp.com)***
 
 ##### Current progress:
 - Up and Running
@@ -32,5 +39,3 @@ Showcase of the project can be found on ***[odysee](https://odysee.com/@val_dev:
 ##### Known issues:
 - Media files from the databaase(default posts) not displayed
 - Since the hosting is free, the server doesn't write to the db after it starts to hibernate
-
-Live demo of the project can be found on ***[heroku](https://network-val.herokuapp.com)***
